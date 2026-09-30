@@ -11,4 +11,4 @@ Proyek ini dikembangkan sebagai sarana pembelajaran penerapan representasi penge
 - **Jejak penalaran** — panel yang bisa dibuka/tutup, menampilkan tiap fakta dan predikat turunan (`Tanggal_Valid_30`, `Terapi_Valid`, `Gejala_Deep`, dst.) beserta nilai benar/salahnya.
 - **Manajemen data pasien simulasi** — simpan kasus dengan kode pasien lewat tombol *Save data* (tersimpan di `localStorage` browser, bertahan lintas sesi selama browser/perangkat yang sama), muat ulang, atau hapus lewat daftar pasien.
 - **4 contoh pasien siap pakai**, satu untuk tiap hasil klasifikasi (superficial, deep, organ/space, dan satu kasus deep lain dengan jalur insisi dibuka + terapi).
-- 
+  
