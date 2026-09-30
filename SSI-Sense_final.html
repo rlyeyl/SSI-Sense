@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SSI-Sense</title>
+<style>
+:root{
+  --bg:#f5f8f8;
+  --surface:#ffffff;
+  --surface-soft:#f0f5f4;
+  --ink:#14201d;
+  --muted:#5d6d67;
+  --line:#d6e1de;
+  --teal:#0f766e;
+  --teal-soft:#dff3f0;
+  --blue:#356a8a;
+  --blue-soft:#e3f0f7;
+  --amber:#ad6b12;
+  --amber-soft:#fff0d5;
+  --rose:#b24a4a;
+  --rose-soft:#fde8e8;
+  --organ:#7d4a73;
+  --organ-soft:#f4e6f0;
+  --green:#3f7d57;
+  --green-soft:#e4f3e9;
+  --shadow:0 10px 28px rgba(26,46,40,.06);
+  --radius:16px;
+  --font:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.5}
+button,input,select{font:inherit}
+button{touch-action:manipulation}
+.wrap{max-width:1220px;margin:0 auto;padding:28px 20px 64px}
+.hero{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:22px}
+.brand{display:flex;gap:14px;align-items:center}
+.logo{width:48px;height:48px;border-radius:14px;background:var(--teal);color:#fff;display:grid;place-items:center;flex:0 0 auto;box-shadow:0 8px 20px rgba(15,118,110,.18)}
+.logo svg,.section-icon svg,.mini-icon svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+h1{font-size:clamp(26px,4vw,38px);line-height:1.08;margin:0 0 6px;font-weight:750;letter-spacing:-.035em}
+.subtitle{margin:0;color:var(--muted);max-width:700px;font-size:13.5px}
+.badge{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 10px;color:var(--muted);font-size:12px;white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--teal)}
+.grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(340px,.92fr);gap:20px;align-items:start}
+@media(max-width:920px){.grid{grid-template-columns:1fr}.hero{flex-direction:column}.badge{align-self:flex-start}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+.panel + .panel{margin-top:18px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}
+.panel-title{display:flex;align-items:center;gap:10px;min-width:0}
+.section-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:0 0 auto}
+.section-icon.teal{background:var(--teal-soft);color:var(--teal)}
+.section-icon.blue{background:var(--blue-soft);color:var(--blue)}
+.section-icon.amber{background:var(--amber-soft);color:var(--amber)}
+.section-icon.rose{background:var(--rose-soft);color:var(--rose)}
+h2{font-size:16px;margin:0;font-weight:700;letter-spacing:-.01em}
+.panel-note{font-size:12px;color:var(--muted);margin-top:2px}
+fieldset{border:0;padding:0;margin:0 0 20px}
+legend{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:9px;padding:0}
+.field{margin-bottom:12px}
+label.field-label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px}
+select,input[type="date"],input[type="number"],input[type="text"]{width:100%;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:10px 11px;outline:none;transition:border-color .15s,box-shadow .15s}
+select:focus,input:focus{border-color:#8eb8b2;box-shadow:0 0 0 3px rgba(47,111,104,.10)}
+input[type="date"]{cursor:pointer;color-scheme:light}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.row2{grid-template-columns:1fr}}
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+@media(max-width:640px){.check-grid{grid-template-columns:1fr}}
+.chk{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--line);border-radius:11px;padding:10px 11px;cursor:pointer;background:#fff;transition:.15s}
+.chk:hover{background:var(--surface-soft)}
+.chk input{margin:3px 0 0;accent-color:var(--teal);flex:0 0 auto}
+.chk span{font-size:12.8px;line-height:1.4}
+.sub-inputs{display:none;margin:10px 0 0;padding:12px;background:var(--surface-soft);border-radius:11px}
+.sub-inputs.show{display:block}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:10px 14px;font-weight:700;font-size:12.5px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.15s}
+.btn:hover{background:var(--surface-soft)}
+.btn.primary{border-color:var(--teal);background:var(--teal);color:#fff;box-shadow:0 6px 16px rgba(15,118,110,.16)}
+.btn.primary:hover{filter:brightness(.94)}
+.btn.ghost-teal{border-color:#9fcfc8;color:#075e58;background:var(--teal-soft)}
+.btn.danger{color:var(--rose);border-color:#ead0d0;background:#fff}
+.mini-icon{display:inline-grid;place-items:center;width:18px;height:18px}
+.verdict{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--surface-soft)}
+.verdict[data-state="none"]{background:var(--green-soft);border-color:#a9d4b7;border-left:5px solid var(--green)}
+.verdict[data-state="si"]{background:var(--amber-soft);border-color:#efcf92;border-left:5px solid var(--amber)}
+.verdict[data-state="di"]{background:var(--rose-soft);border-color:#efbcbc;border-left:5px solid var(--rose)}
+.verdict[data-state="os"]{background:var(--organ-soft);border-color:#d7b7cf;border-left:5px solid var(--organ)}
+.verdict[data-state="idle"]{background:var(--blue-soft);border-color:#bad6e6;border-left:5px solid var(--blue)}
+.verdict[data-state="none"] .verdict-value{color:var(--green)}
+.verdict[data-state="si"] .verdict-value{color:var(--amber)}
+.verdict[data-state="di"] .verdict-value{color:var(--rose)}
+.verdict[data-state="os"] .verdict-value{color:var(--organ)}
+.verdict[data-state="idle"] .verdict-value{color:var(--blue)}
+.verdict-label{font-size:11.5px;color:var(--muted);margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.verdict-value{font-size:22px;font-weight:800;letter-spacing:-.025em}
+.verdict-detail{font-size:12.8px;color:var(--muted);margin-top:6px}
+.trace-wrap{display:none;margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+.trace-wrap.show{display:block}
+.trace{font-size:12px;max-height:460px;overflow-y:auto;padding-right:3px}
+.t-fact,.t-derive{padding:9px 10px;border:1px solid var(--line);border-left-width:4px;border-radius:9px;margin-bottom:7px;background:#fff}
+.t-fact{border-left-color:#9aa8a3}
+.t-derive.true{border-left-color:var(--teal);background:#f7fbfa}
+.t-derive.false{border-left-color:#c9d1ce}
+.t-derive .name{font-weight:750}
+.t-derive .val{float:right;font-weight:800}
+.t-derive.true .val{color:var(--teal)}
+.t-derive.false .val{color:#8d9894}
+.t-derive .why{color:var(--muted);margin-top:4px;clear:both}
+.empty-note{color:var(--muted);font-size:12.5px;padding:8px 2px}
+ .patient-list{display:grid;gap:9px}
+#customPatientList{display:grid;gap:9px}
+.patient-card{position:relative;border:1px solid var(--line);border-left:4px solid var(--line);border-radius:13px;background:#fff;transition:.15s}
+.patient-card:hover{border-color:#aac3bc;box-shadow:0 8px 20px rgba(28,52,44,.08);transform:translateY(-1px)}
+.patient-card.active{border-color:var(--teal);background:#f0fbf9;box-shadow:0 0 0 2px rgba(15,118,110,.10)}
+.patient-card[data-class="si"]{border-left-color:var(--amber)}
+.patient-card[data-class="di"]{border-left-color:var(--rose)}
+.patient-card[data-class="os"]{border-left-color:var(--organ)}
+.patient-card[data-class="none"]{border-left-color:var(--green)}
+.patient-load{width:100%;border:0;background:transparent;color:var(--ink);padding:12px 48px 12px 13px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;text-align:left}
+.patient-main{min-width:0}
+.patient-name{font-size:13px;font-weight:800;margin-bottom:2px}
+.patient-meta{font-size:11.5px;color:var(--muted);line-height:1.35}
+.patient-tag{font-size:10.5px;font-weight:850;border-radius:999px;padding:5px 8px;white-space:nowrap;flex:0 0 auto;border:1px solid transparent}
+.patient-tag.tag-si{color:#7b4706;background:var(--amber-soft);border-color:#efcf92}
+.patient-tag.tag-di{color:#8d3030;background:var(--rose-soft);border-color:#efbcbc}
+.patient-tag.tag-os{color:#633957;background:var(--organ-soft);border-color:#d7b7cf}
+.patient-tag.tag-none{color:#2f6544;background:var(--green-soft);border-color:#a9d4b7}
+.patient-tag.tag-idle{color:#2e5d7a;background:var(--blue-soft);border-color:#bad6e6}
+.patient-delete{position:absolute;right:9px;top:50%;transform:translateY(-50%);z-index:2}
+.custom-row{display:grid;grid-template-columns:1fr auto;gap:9px;margin-bottom:12px}
+@media(max-width:560px){.custom-row{grid-template-columns:1fr}.custom-row .btn{justify-content:center}}
+.icon-btn{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--muted);display:grid;place-items:center;cursor:pointer}
+.icon-btn:hover{background:var(--surface-soft);color:var(--ink)}
+.icon-btn.delete:hover{background:var(--rose-soft);color:var(--rose);border-color:#ead0d0}
+.toast{display:none;margin-top:10px;padding:9px 11px;border-radius:10px;background:var(--teal-soft);color:var(--teal);font-size:12px;font-weight:700}
+.toast.show{display:block}
+.helper{font-size:11.5px;color:var(--muted);margin-top:5px}
+footer{margin-top:24px;color:var(--muted);font-size:11.5px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="8"/></svg>
+      </div>
+      <div>
+        <h1>SSI-Sense</h1>
+        <p class="subtitle">Simulator klasifikasi Surgical Site Infection berbasis knowledge-based system dan forward chaining.</p>
+      </div>
+    </div>
+    <div class="badge"><span class="dot"></span> Mode simulasi edukasi</div>
+  </header>
+
+  <div class="grid">
+    <main>
+      <section class="panel">
+        <div class="panel-head">
+          <div class="panel-title">
+            <div class="section-icon teal" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M9 4h6M9 20h6M8 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>
+            </div>
+            <div><h2>Data pemeriksaan</h2><div class="panel-note">Pilih prosedur dan masukkan temuan yang tersedia.</div></div>
+          </div>
+        </div>
+
+        <form id="f">
+          <fieldset>
+            <legend>Informasi pasien dan prosedur</legend>
+            <div class="field">
+              <label class="field-label" for="patientCode">Kode pasien</label>
+              <input type="text" id="patientCode" placeholder="Contoh: P001" maxlength="30" autocomplete="off">
+              <div class="helper">Kode pasien digunakan sebagai identitas data simulasi saat disimpan.</div>
+            </div>
+            <div class="field">
+              <label class="field-label" for="proc">Jenis prosedur</label>
+              <select id="proc">
+                <option value="">Pilih prosedur</option>
+                <option value="p1">Eksisi lipoma kulit</option>
+                <option value="p2">Insisi &amp; drainase abses kulit</option>
+                <option value="p3">Biopsi eksisi kulit</option>
+                <option value="p4">Herniorrhaphy (HER)</option>
+                <option value="p5">Reduksi terbuka fraktur (FX)</option>
+                <option value="p6">Pemasangan pacemaker (PACE)</option>
+                <option value="p7">Kolektomi / reseksi kolon (COLO)</option>
+                <option value="p8">Histerektomi abdominal (HYST)</option>
+                <option value="p9">Apendektomi (APPY)</option>
+              </select>
+            </div>
+            <div class="row2">
+              <div class="field"><label class="field-label" for="tglP">Tanggal operasi</label><input type="date" id="tglP"></div>
+              <div class="field"><label class="field-label" for="tglE">Tanggal temuan</label><input type="date" id="tglE"></div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Temuan klinis</legend>
+            <div class="check-grid">
+              <label class="chk"><input type="checkbox" id="drainVisible"><span>Drainase purulen terlihat dari luar insisi</span></label>
+              <label class="chk"><input type="checkbox" id="dibuka"><span>Insisi dibuka/diakses atau mengalami dehiscence spontan</span></label>
+              <label class="chk"><input type="checkbox" id="abses"><span>Abses / bukti infeksi lain dari pemeriksaan</span></label>
+              <label class="chk"><input type="checkbox" id="drainTube"><span>Drainase purulen dari drain organ/space</span></label>
+            </div>
+            <div class="sub-inputs" id="dibukaSub">
+              <div class="field"><label class="field-label" for="tglC">Tanggal insisi dibuka</label><input type="date" id="tglC"></div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Terapi antimikroba</legend>
+            <div class="row2">
+              <div class="field"><label class="field-label" for="tglB">Tanggal mulai / lanjut terapi</label><input type="date" id="tglB"></div>
+              <div class="field"><label class="field-label" for="durasi">Durasi terapi (hari)</label><input type="number" id="durasi" min="0" value="0"></div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Gejala penyerta</legend>
+            <div class="check-grid">
+              <label class="chk"><input type="checkbox" id="nyeri"><span>Nyeri lokal baru atau memburuk</span></label>
+              <label class="chk"><input type="checkbox" id="bengkak"><span>Bengkak lokal</span></label>
+              <label class="chk"><input type="checkbox" id="eritema"><span>Eritema / kemerahan</span></label>
+              <label class="chk"><input type="checkbox" id="hangat"><span>Hangat lokal</span></label>
+            </div>
+            <div class="field" style="margin-top:11px"><label class="field-label" for="demam">Suhu tubuh (°C)</label><input type="number" id="demam" step="0.1" placeholder="36.5"></div>
+          </fieldset>
+
+          <div class="actions">
+            <button type="button" class="btn" id="reset">
+              <span class="mini-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4v6h6"/><path d="M20 20v-6h-6"/><path d="M5.5 15a7 7 0 0 0 11.5 2l3-3M18.5 9A7 7 0 0 0 7 7l-3 3"/></svg></span>
+              Reset form
+            </button>
+            <button type="button" class="btn primary" id="savePatient">
+              <span class="mini-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4h12l2 2v14H5z"/><path d="M8 4v6h8V4M8 20v-6h8v6"/></svg></span>
+              Save data
+            </button>
+          </div>
+          <div class="toast" id="toast"></div>
+        </form>
+      </section>
+    </main>
+
+    <aside>
+      <section class="panel">
+        <div class="panel-head">
+          <div class="panel-title">
+            <div class="section-icon blue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></div>
+            <div><h2>Klasifikasi</h2><div class="panel-note">Hasil diperbarui otomatis dari input saat ini.</div></div>
+          </div>
+        </div>
+
+        <div class="verdict" id="verdict" data-state="idle">
+          <div class="verdict-label">Hasil klasifikasi</div>
+          <div class="verdict-value" id="verdictText">Belum dievaluasi</div>
+          <div class="verdict-detail" id="verdictDetail">Pilih prosedur dan isi tanggal untuk memulai.</div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn ghost-teal" id="traceToggle" aria-expanded="false">
+            <span class="mini-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="12" r="2"/><circle cx="15" cy="18" r="2"/></svg></span>
+            <span id="traceToggleText">Lihat jejak penalaran</span>
+          </button>
+        </div>
+        <div class="trace-wrap" id="traceWrap">
+          <div class="trace" id="trace"><div class="empty-note">Jejak penalaran akan muncul setelah data diisi.</div></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div class="panel-title">
+            <div class="section-icon amber" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h12v18H6z"/><path d="M9 7h6M9 11h6M9 15h4"/></svg></div>
+            <div><h2>Daftar pasien simulasi</h2><div class="panel-note">Klik salah satu pasien untuk langsung memuat contoh kasus ke form pemeriksaan.</div></div>
+          </div>
+        </div>
+        <div class="patient-list" id="patientList">
+          <div class="patient-card" data-patient-card="example-0" data-class="si">
+            <button type="button" class="patient-load" data-example-patient="0" title="Muat Pasien A ke form">
+              <div class="patient-main"><div class="patient-name">P001 · Pasien A</div><div class="patient-meta">Insisi &amp; drainase abses kulit • hari ke-5</div></div>
+              <span class="patient-tag tag-si">Superficial SSI</span>
+            </button>
+          </div>
+          <div class="patient-card" data-patient-card="example-1" data-class="di">
+            <button type="button" class="patient-load" data-example-patient="1" title="Muat Pasien B ke form">
+              <div class="patient-main"><div class="patient-name">P002 · Pasien B</div><div class="patient-meta">Herniorrhaphy • temuan hari ke-60</div></div>
+              <span class="patient-tag tag-di">Deep SSI</span>
+            </button>
+          </div>
+          <div class="patient-card" data-patient-card="example-2" data-class="os">
+            <button type="button" class="patient-load" data-example-patient="2" title="Muat Pasien C ke form">
+              <div class="patient-main"><div class="patient-name">P003 · Pasien C</div><div class="patient-meta">Kolektomi / reseksi kolon • hari ke-10</div></div>
+              <span class="patient-tag tag-os">Organ/Space SSI</span>
+            </button>
+          </div>
+          <div class="patient-card" data-patient-card="example-3" data-class="di">
+            <button type="button" class="patient-load" data-example-patient="3" title="Muat Pasien D ke form">
+              <div class="patient-main"><div class="patient-name">P004 · Pasien D</div><div class="patient-meta">Kolektomi / reseksi kolon • insisi dibuka + terapi</div></div>
+              <span class="patient-tag tag-di">Deep SSI</span>
+            </button>
+          </div>
+          <div id="customPatientList"></div>
+        </div>
+      </section>
+
+
+    </aside>
+  </div>
+
+  <footer>SSI-Sense • simulator edukasi berbasis basis pengetahuan pada file proyek terbaru.</footer>
+</div>
+
+<script>
+const PROCS = {
+  p1:{name:"Eksisi lipoma kulit", depth:"kulit_subkutan", days:30},
+  p2:{name:"Insisi & drainase abses kulit", depth:"kulit_subkutan", days:30},
+  p3:{name:"Biopsi eksisi kulit", depth:"kulit_subkutan", days:30},
+  p4:{name:"Herniorrhaphy (HER)", depth:"jaringan_lunak_otot", days:90},
+  p5:{name:"Reduksi terbuka fraktur (FX)", depth:"jaringan_lunak_otot", days:90},
+  p6:{name:"Pemasangan pacemaker (PACE)", depth:"jaringan_lunak_otot", days:90},
+  p7:{name:"Kolektomi / reseksi kolon (COLO)", depth:"organ_rongga", days:30},
+  p8:{name:"Histerektomi abdominal (HYST)", depth:"organ_rongga", days:30},
+  p9:{name:"Apendektomi (APPY)", depth:"organ_rongga", days:30},
+};
+const ORDER = {kulit_subkutan:1, jaringan_lunak_otot:2, organ_rongga:3};
+const $ = id => document.getElementById(id);
+
+const EXAMPLES = [
+  {
+    name:"Pasien A", code:"P001", label:"Superficial SSI",
+    meta:"Insisi & drainase abses kulit • hari ke-5",
+    data:{patientCode:"P001",proc:"p2",tglP:"2026-09-01",tglE:"2026-09-06",drainVisible:true}
+  },
+  {
+    name:"Pasien B", code:"P002", label:"Deep SSI",
+    meta:"Herniorrhaphy • temuan hari ke-60",
+    data:{patientCode:"P002",proc:"p4",tglP:"2026-09-01",tglE:"2026-10-31",drainVisible:true}
+  },
+  {
+    name:"Pasien C", code:"P003", label:"Organ/Space SSI",
+    meta:"Kolektomi / reseksi kolon • hari ke-10",
+    data:{patientCode:"P003",proc:"p7",tglP:"2026-09-01",tglE:"2026-09-11",abses:true}
+  },
+  {
+    name:"Pasien D", code:"P004", label:"Deep SSI",
+    meta:"Kolektomi / reseksi kolon • insisi dibuka + terapi",
+    data:{patientCode:"P004",proc:"p7",tglP:"2026-09-01",tglE:"2026-09-11",dibuka:true,tglC:"2026-09-09",tglB:"2026-09-10",durasi:3,demam:38.5,nyeri:true}
+  }
+];
+
+const FORM_IDS = ["patientCode","proc","tglP","tglE","drainVisible","dibuka","tglC","abses","drainTube","tglB","durasi","nyeri","bengkak","eritema","hangat","demam"];
+let activePatientKey = null;
+let memorySavedCases = [];
+
+function dayDiff(a,b){
+  if(!a || !b) return null;
+  const late = new Date(a + "T00:00:00");
+  const early = new Date(b + "T00:00:00");
+  return Math.round((late - early) / 86400000);
+}
+
+function renderTrace(list){
+  const el = $('trace');
+  if(!list.length){
+    el.innerHTML = '<div class="empty-note">Jejak penalaran akan muncul setelah data diisi.</div>';
+    return;
+  }
+  el.innerHTML = list.map(item => item.kind === 'fact'
+    ? `<div class="t-fact">${item.text}</div>`
+    : `<div class="t-derive ${item.val ? 'true' : 'false'}"><span class="name">${item.name}</span><span class="val">${item.val ? 'TRUE' : 'false'}</span><div class="why">${item.why}</div></div>`
+  ).join('');
+}
+
+function setIdle(){
+  $('verdict').dataset.state = 'idle';
+  $('verdictText').textContent = 'Belum dievaluasi';
+  $('verdictDetail').textContent = 'Pilih prosedur dan isi tanggal untuk memulai.';
+  renderTrace([]);
+}
+
+function run(){
+  const pid = $('proc').value;
+  const proc = PROCS[pid];
+  const tglP = $('tglP').value;
+  const tglE = $('tglE').value;
+
+  if(!proc){ setIdle(); return; }
+
+  const kulit = true;
+  const deep = ORDER[proc.depth] >= 2;
+  const organ = ORDER[proc.depth] >= 3;
+  const days = proc.days;
+  const tglB = $('tglB').value;
+  const durasi = parseFloat($('durasi').value) || 0;
+  const demam = parseFloat($('demam').value);
+  const drainVisible = $('drainVisible').checked;
+  const dibuka = $('dibuka').checked;
+  const tglC = $('tglC').value;
+  const abses = $('abses').checked;
+  const drainTube = $('drainTube').checked;
+  const nyeri = $('nyeri').checked;
+  const bengkak = $('bengkak').checked;
+  const eritema = $('eritema').checked;
+  const hangat = $('hangat').checked;
+
+  const T = [];
+  const patientCode = $('patientCode').value.trim();
+  if(patientCode) T.push({kind:'fact', text:`Kode pasien: ${escapeHtml(patientCode)}`});
+  T.push({kind:'fact', text:`Prosedur: ${proc.name}`});
+  T.push({kind:'derive', name:'Kulit_Subkutan(p)', val:kulit, why:'true untuk semua prosedur yang dipilih.'});
+  T.push({kind:'derive', name:'Jaringan_Lunak_Otot(p)', val:deep, why:'true bila kedalaman maksimum prosedur mencapai jaringan_lunak_otot atau lebih dalam.'});
+  T.push({kind:'derive', name:'Organ_Rongga(p)', val:organ, why:'true bila kedalaman maksimum prosedur mencapai organ_rongga.'});
+
+  const diffE = dayDiff(tglE, tglP);
+  const valid30 = diffE !== null && diffE >= 0 && diffE <= 30;
+  const validKat = diffE !== null && diffE >= 0 && diffE <= days;
+  if(diffE !== null){
+    T.push({kind:'derive', name:'Tanggal_Valid_30(p,t_e)', val:valid30, why:`selisih ${diffE} hari; syarat superficial ≤30 hari.`});
+    T.push({kind:'derive', name:'Tanggal_Valid_Kategori(p,t_e)', val:validKat, why:`selisih ${diffE} hari; batas kategori prosedur ${days} hari.`});
+  }
+
+  const diffT = dayDiff(tglB, tglC);
+  const terapiValid = dibuka && diffT !== null && diffT >= 0 && diffT <= 2 && durasi >= 2;
+  if(dibuka){
+    T.push({kind:'derive', name:'Terapi_Valid(x,t_c)', val:!!terapiValid, why:diffT !== null ? `t_b−t_c=${diffT} hari; durasi ${durasi} hari.` : 'tanggal terapi atau tanggal pembukaan belum lengkap.'});
+  }
+
+  const gejalaSup = nyeri || bengkak || eritema || hangat;
+  const gejalaDeep = (Number.isFinite(demam) && demam > 38) || nyeri;
+  T.push({kind:'derive', name:'Gejala_Superfisial(x)', val:gejalaSup, why:'nyeri ∨ bengkak ∨ eritema ∨ hangat.'});
+  T.push({kind:'derive', name:'Gejala_Deep(x)', val:gejalaDeep, why:Number.isFinite(demam) ? `suhu=${demam}°C (>38 → ${demam > 38}) ∨ nyeri=${nyeri}.` : `suhu kosong ∨ nyeri=${nyeri}.`});
+
+  const siSSI = kulit && valid30 && (drainVisible || (dibuka && terapiValid && gejalaSup));
+  const diSSI = deep && validKat && (drainVisible || (dibuka && terapiValid && gejalaDeep) || abses);
+  const osSSI = organ && validKat && (drainTube || abses);
+
+  T.push({kind:'derive', name:'SI-SSI(x,p,t_e)', val:!!siSSI, why:'Kulit_Subkutan ∧ Tanggal_Valid_30 ∧ [Drainase_Terlihat ∨ (Insisi_Dibuka ∧ Terapi_Valid ∧ Gejala_Superfisial)].'});
+  T.push({kind:'derive', name:'DI-SSI(x,p,t_e)', val:!!diSSI, why:'Jaringan_Lunak_Otot ∧ Tanggal_Valid_Kategori ∧ [Drainase_Terlihat ∨ (Insisi_Dibuka ∧ Terapi_Valid ∧ Gejala_Deep) ∨ Abses].'});
+  T.push({kind:'derive', name:'Organ/Space-SSI(x,p,t_e)', val:!!osSSI, why:'Organ_Rongga ∧ Tanggal_Valid_Kategori ∧ [Drainase_Dari_Drain ∨ Abses].'});
+
+  const notInf = !siSSI && !diSSI && !osSSI;
+  let jenis = 'Not_Infectious';
+  let detail = 'Tidak ada kriteria eligible yang terpenuhi.';
+  if(osSSI){ jenis = 'Organ/Space SSI'; detail = 'Level terdalam yang terpenuhi: organ/space.'; }
+  else if(diSSI){ jenis = 'Deep Incisional SSI'; detail = 'Level terdalam yang terpenuhi: deep incisional.'; }
+  else if(siSSI){ jenis = 'Superficial Incisional SSI'; detail = 'Hanya level superficial yang terpenuhi.'; }
+
+  T.push({kind:'derive', name:'Jenis_SSI(x,p)', val:!notInf, why:`Resolusi prioritas kedalaman → ${jenis}.`});
+  renderTrace(T);
+
+  if(!tglP || !tglE){
+    $('verdict').dataset.state = 'idle';
+    $('verdictText').textContent = 'Data belum lengkap';
+    $('verdictDetail').textContent = 'Lengkapi tanggal operasi dan tanggal temuan agar klasifikasi dapat dihitung.';
+    return;
+  }
+
+  $('verdict').dataset.state = osSSI ? 'os' : diSSI ? 'di' : siSSI ? 'si' : 'none';
+  $('verdictText').textContent = jenis;
+  $('verdictDetail').textContent = detail;
+}
+
+function resetInputs(){
+  // Dibuat eksplisit supaya reset tetap bekerja walaupun nilai form sebelumnya diisi lewat JavaScript.
+  FORM_IDS.forEach(id => {
+    const el = $(id);
+    if(!el) return;
+    if(el.type === 'checkbox') el.checked = false;
+    else if(id === 'durasi') el.value = '0';
+    else el.value = '';
+  });
+  $('dibukaSub').classList.remove('show');
+}
+
+function clearForm(){
+  resetInputs();
+  activePatientKey = null;
+  document.querySelectorAll('[data-patient-card]').forEach(card => card.classList.remove('active'));
+  $('traceWrap').classList.remove('show');
+  $('traceToggle').setAttribute('aria-expanded','false');
+  $('traceToggleText').textContent = 'Lihat jejak penalaran';
+  setIdle();
+}
+
+function captureForm(){
+  const data = {};
+  FORM_IDS.forEach(id => {
+    const el = $(id);
+    data[id] = el.type === 'checkbox' ? el.checked : el.value;
+  });
+  return data;
+}
+
+function applyData(data){
+  resetInputs();
+  FORM_IDS.forEach(id => {
+    if(!(id in data)) return;
+    const el = $(id);
+    if(el.type === 'checkbox') el.checked = !!data[id];
+    else el.value = data[id] ?? '';
+  });
+  $('dibukaSub').classList.toggle('show', $('dibuka').checked);
+  run();
+}
+
+function getSavedCases(){
+  try{
+    const raw = localStorage.getItem('ssiSensePatients');
+    if(raw !== null){
+      const parsed = JSON.parse(raw);
+      if(Array.isArray(parsed)) memorySavedCases = parsed;
+    }
+  }catch(e){}
+  return [...memorySavedCases];
+}
+
+function setSavedCases(cases){
+  memorySavedCases = [...cases];
+  try{ localStorage.setItem('ssiSensePatients', JSON.stringify(cases)); }catch(e){}
+}
+
+function markActivePatient(){
+  document.querySelectorAll('[data-patient-card]').forEach(card => {
+    const active = card.dataset.patientCard === activePatientKey;
+    card.classList.toggle('active', active);
+  });
+}
+
+function loadPatientCase(key, patient){
+  if(!patient || !patient.data) return;
+  applyData(patient.data);
+  activePatientKey = key;
+  markActivePatient();
+  showToast(`${patient.code || patient.data.patientCode || patient.name || 'Pasien'} dimuat ke form.`);
+}
+
+
+function classifyData(data){
+  const proc = PROCS[data?.proc];
+  if(!proc || !data?.tglP || !data?.tglE){
+    return {state:'idle', label:'Belum dievaluasi'};
+  }
+
+  const deep = ORDER[proc.depth] >= 2;
+  const organ = ORDER[proc.depth] >= 3;
+  const diffE = dayDiff(data.tglE, data.tglP);
+  const valid30 = diffE !== null && diffE >= 0 && diffE <= 30;
+  const validKat = diffE !== null && diffE >= 0 && diffE <= proc.days;
+
+  const diffT = dayDiff(data.tglB, data.tglC);
+  const durasi = parseFloat(data.durasi) || 0;
+  const terapiValid = !!data.dibuka && diffT !== null && diffT >= 0 && diffT <= 2 && durasi >= 2;
+
+  const demam = parseFloat(data.demam);
+  const gejalaSup = !!data.nyeri || !!data.bengkak || !!data.eritema || !!data.hangat;
+  const gejalaDeep = (Number.isFinite(demam) && demam > 38) || !!data.nyeri;
+
+  const siSSI = valid30 && (!!data.drainVisible || (!!data.dibuka && terapiValid && gejalaSup));
+  const diSSI = deep && validKat && (!!data.drainVisible || (!!data.dibuka && terapiValid && gejalaDeep) || !!data.abses);
+  const osSSI = organ && validKat && (!!data.drainTube || !!data.abses);
+
+  if(osSSI) return {state:'os', label:'Organ/Space SSI'};
+  if(diSSI) return {state:'di', label:'Deep SSI'};
+  if(siSSI) return {state:'si', label:'Superficial SSI'};
+  return {state:'none', label:'Not_Infectious'};
+}
+
+function diagnosisTagClass(state){
+  return state === 'si' ? 'tag-si'
+       : state === 'di' ? 'tag-di'
+       : state === 'os' ? 'tag-os'
+       : state === 'none' ? 'tag-none'
+       : 'tag-idle';
+}
+
+function renderPatients(){
+  const holder = $('customPatientList');
+  if(!holder) return;
+  const custom = getSavedCases();
+  holder.innerHTML = custom.map((c, i) => {
+    const p = PROCS[c.data?.proc];
+    const procName = p ? p.name : 'Prosedur belum dipilih';
+    const code = c.data?.patientCode || c.code || `DATA-${i+1}`;
+    const key = `custom-${i}`;
+    const result = classifyData(c.data || {});
+    return `<div class="patient-card" data-patient-card="${key}" data-class="${result.state}">
+      <button type="button" class="patient-load" data-custom-patient="${i}" title="Muat ${escapeHtml(code)} ke form">
+        <div class="patient-main">
+          <div class="patient-name">${escapeHtml(code)}</div>
+          <div class="patient-meta">${escapeHtml(procName)} • data tersimpan</div>
+        </div>
+        <span class="patient-tag ${diagnosisTagClass(result.state)}">${escapeHtml(result.label)}</span>
+      </button>
+      <button class="icon-btn delete patient-delete" type="button" title="Hapus data" data-delete-patient="${i}" aria-label="Hapus ${escapeHtml(code)}">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13"/></svg>
+      </button>
+    </div>`;
+  }).join('');
+  markActivePatient();
+}
+
+function saveCurrentPatient(){
+  const data = captureForm();
+  const code = String(data.patientCode || '').trim();
+  if(!code){ showToast('Isi kode pasien terlebih dahulu.'); $('patientCode').focus(); return; }
+  if(!data.proc || !data.tglP || !data.tglE){ showToast('Lengkapi prosedur, tanggal operasi, dan tanggal temuan sebelum menyimpan.'); return; }
+
+  const cases = getSavedCases();
+  const index = cases.findIndex(c => String(c.data?.patientCode || '').toLowerCase() === code.toLowerCase());
+  const result = classifyData(data);
+  const record = {code, data, classification: result.label};
+  if(index >= 0){
+    cases[index] = record;
+    showToast(`Data ${code} diperbarui • ${result.label}.`);
+  }else{
+    cases.push(record);
+    showToast(`Data ${code} disimpan • ${result.label}.`);
+  }
+  setSavedCases(cases.slice(-20));
+  renderPatients();
+  activePatientKey = `custom-${Math.max(0, getSavedCases().findIndex(c => String(c.data?.patientCode || '').toLowerCase() === code.toLowerCase()))}`;
+  markActivePatient();
+}
+
+function showToast(msg){
+  const t = $('toast');
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+}
+
+// Form berubah -> klasifikasi diperbarui otomatis.
+$('dibuka').addEventListener('change', () => {
+  $('dibukaSub').classList.toggle('show', $('dibuka').checked);
+  if(!$('dibuka').checked) $('tglC').value = '';
+  run();
+});
+$('f').addEventListener('input', run);
+$('f').addEventListener('change', run);
+
+// Event delegation: contoh pasien dan pasien tersimpan selalu bisa diklik,
+// termasuk elemen yang dirender ulang setelah tombol Save digunakan.
+$('patientList').addEventListener('click', (event) => {
+  const exampleBtn = event.target.closest('[data-example-patient]');
+  if(exampleBtn){
+    const i = Number(exampleBtn.dataset.examplePatient);
+    loadPatientCase(`example-${i}`, EXAMPLES[i]);
+    return;
+  }
+  const customBtn = event.target.closest('[data-custom-patient]');
+  if(customBtn){
+    const i = Number(customBtn.dataset.customPatient);
+    loadPatientCase(`custom-${i}`, getSavedCases()[i]);
+    return;
+  }
+  const deleteBtn = event.target.closest('[data-delete-patient]');
+  if(deleteBtn){
+    event.preventDefault();
+    event.stopPropagation();
+    const i = Number(deleteBtn.dataset.deletePatient);
+    const cases = getSavedCases();
+    const removed = cases[i];
+    cases.splice(i,1);
+    setSavedCases(cases);
+    activePatientKey = null;
+    renderPatients();
+    showToast(`${removed?.data?.patientCode || 'Data pasien'} dihapus.`);
+  }
+});
+
+// Reset ditangani secara eksplisit agar pasti membersihkan data programmatic.
+$('reset').addEventListener('click', (event) => {
+  event.preventDefault();
+  clearForm();
+  showToast('Form berhasil direset.');
+});
+
+$('savePatient').addEventListener('click', (event) => {
+  event.preventDefault();
+  saveCurrentPatient();
+});
+
+$('traceToggle').addEventListener('click', () => {
+  const open = !$('traceWrap').classList.contains('show');
+  $('traceWrap').classList.toggle('show', open);
+  $('traceToggle').setAttribute('aria-expanded', String(open));
+  $('traceToggleText').textContent = open ? 'Sembunyikan jejak penalaran' : 'Lihat jejak penalaran';
+});
+
+// Meminta date picker native bila browser mendukung showPicker().
+document.querySelectorAll('input[type="date"]').forEach(inp => {
+  inp.addEventListener('click', () => {
+    if(typeof inp.showPicker === 'function'){
+      try{ inp.showPicker(); }catch(e){}
+    }
+  });
+});
+
+renderPatients();
+clearForm();
+</script>
+</body>
+</html>
